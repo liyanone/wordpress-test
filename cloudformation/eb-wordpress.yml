@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+    ElasticBeanstalk for WordPress
+
+Resources:
+  wordpressApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      Description: AWS Elastic Beanstalk WordPress Application
+  wordpressApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName:
+        Ref: wordpressApplication
+      Description: AWS ElasticBeanstalk WordPress Application Version
+      SourceBundle:
+        S3Bucket: !Sub "elasticbeanstalk-samples-${AWS::Region}"
+        S3Key: php-sample.zip
+  wordpressConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName:
+        Ref: wordpressApplication
+      Description: AWS ElasticBeanstalk WordPress Configuration Template
+      OptionSettings:
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: EnvironmentType
+        Value: SingleInstance
+      SolutionStackName: 64bit Amazon Linux running PHP 5.6
+  wordpressEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName:
+        Ref: wordpressApplication
+      Description: AWS ElasticBeanstalk WordPress Environment
+      TemplateName:
+        Ref: wordpressConfigurationTemplate
+      VersionLabel:
+        Ref: wordpressApplicationVersion
