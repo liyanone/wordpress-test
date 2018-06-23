@@ -3,6 +3,33 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: >
     ElasticBeanstalk for WordPress
 
+Parameters:
+
+    DBIdentifier:
+        Description: The unique name of db instance
+        Type: String
+
+    DBName:
+        Description: What is the name of the database?
+        Type: String
+
+    DBUser:
+        Description: What is the username of the database?
+        Type: String
+
+    DBPassword:
+        NoEcho: true
+        Description: The WordPress database admin account password
+        Type: String
+        MinLength: 8
+        MaxLength: 41
+        AllowedPattern: '[a-zA-Z0-9]*'
+        ConstraintDescription: must contain only alphanumeric characters.
+
+    DBHost:
+        Description: What is the HOSTNAME of the database?
+        Type: String
+
 Resources:
   wordpressApplication:
     Type: AWS::ElasticBeanstalk::Application
@@ -30,6 +57,18 @@ Resources:
       - Namespace: aws:autoscaling:launchconfiguration
         OptionName: EC2KeyName
         Value: liyan
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: RDS_DB_NAME
+        Value: !Ref DBName
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: RDS_USERNAME
+        Value: !Ref DBUser
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: RDS_PASSWORD
+        Value: !Ref DBPassword
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: RDS_HOSTNAME
+        Value: !Ref DBHost
       SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 5.6
   wordpressEnvironment:
     Type: AWS::ElasticBeanstalk::Environment

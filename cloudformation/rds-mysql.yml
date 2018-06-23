@@ -42,6 +42,13 @@ Resources:
       DBInstanceIdentifier: !Ref DBIdentifier
       MultiAZ: false
       PubliclyAccessible: true
+
+Outputs:
+  MySQLRDSHostName:
+        Description: A reference to the RDS instance
+        Value: !GetAtt MySQLDB.Endpoint.Address
+        Export:
+          Name: !Sub "${AWS::StackName}-hostname"
   #     VPCSecurityGroups: !GetAtt SecurityGroup.GroupId
   #
   # SecurityGroup:
