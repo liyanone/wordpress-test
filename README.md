@@ -34,6 +34,8 @@ Download WordPress and push to Github.
 
 ## Create an Elastic Beanstalk environment
 
+There are 2 ways to create elasticbeanstalk:
+
 1. Use cloudformation/eb-wordpress.yml to create a single instance elasticbeanstalk environment for wordpress
 
 2. Configure a local EB CLI repository and create elasticbeanstalk with PHP platform using eb cli.
@@ -59,7 +61,7 @@ Download WordPress and push to Github.
         ~/wordpress-beanstalk$ eb create -s  
         Add -s if you only want to set up a single wordpress instance without any load balancer and auto scaling
 
-## Deploy WordPress to your environment
+## Deploy WordPress to your environment using eb cli
 Deploy the project code to your Elastic Beanstalk environment.
 
 First, confirm that your environment is `Ready` with `eb status`.
@@ -69,13 +71,13 @@ First, confirm that your environment is `Ready` with `eb status`.
 ~/wordpress-beanstalk$ eb deploy
 ```
 
-### NOTE: security configuration
+## Deploy WordPress to your environment using CI/CD Pipeline
 
-This project includes a configuration file (`loadbalancer-sg.config`) that creates a security group and assigns it to the environment's load balancer, using the IP address that you configured in `ssh.config` to restrict HTTP access on port 80 to connections from your network. Otherwise, an outside party could potentially connect to your site before you have installed WordPress and configured your admin account.
+As we are deploying on elasticbeanstalk, AWS Codepipeline can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk. We don't have to run eb cli manually.
 
-You can [view the related SGs in the EC2 console](https://console.aws.amazon.com/ec2/v2/home#SecurityGroups:search=wordpress-beanstalk).
+Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in .buildkite folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
 
-# Updating keys and salts
+## Updating keys and salts
 
 The WordPress configuration file `wp-config.php` also reads values for keys and salts from environment properties.
 
@@ -92,7 +94,7 @@ Manually scale up to run the site on multiple instances for high availability.
 ```Shell
 ~/wordpress-beanstalk$ eb scale 3
 ```
-#Off Load wp-content
+## Off Load wp-content
 
 When deploying using eb deploy, it has a limitation on the size of the zip file. If there are too many files under wp-content folder, it is better to store files in storage like AWS S3 or install plugin to server wp-content from other storage.
 
@@ -110,9 +112,3 @@ When deploying using eb deploy, it has a limitation on the size of the zip file.
     It will put a post-deploy script on the instance and pull the files after the wordpress application deployed. If this script is ran before deployment, the pulled content will be override by deployment package, which not contain the wp-content files.
 
     Make sure the instance profile has correct permission to run aws cli in this scripts.
-
-#CI/CD Pipeline
-
-As we are deploying on elasticbeanstalk, AWS Codepipeline can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk. We don't have to run eb cli manually.
-
-Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in .buildkite folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
