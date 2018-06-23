@@ -1,0 +1,7 @@
+steps:
+  - name: ":hammer:"
+    command: ".buildkite/eb-deploy.sh"
+    agents:
+      queue: "deployer"
+    concurrency: 1
+    concurrency_group: "devops/deploy"

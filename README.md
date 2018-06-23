@@ -26,8 +26,6 @@ Use CloudFormation template in this repository to create a MySQL
           --parameter-overrides "DBIdentifier=wordpressdb" "DBIdentifier=wordpressdb" "DBPassword=xxxxx" "DBUser=admin" "VpcId=vpc-73be8a17" \
           --capabilities CAPABILITY_NAMED_IAM
 
-## Set up elasticbeanstalk
-
 ## Set up your project directory
 
 Download WordPress and push to Github.
@@ -112,3 +110,9 @@ When deploying using eb deploy, it has a limitation on the size of the zip file.
     It will put a post-deploy script on the instance and pull the files after the wordpress application deployed. If this script is ran before deployment, the pulled content will be override by deployment package, which not contain the wp-content files.
 
     Make sure the instance profile has correct permission to run aws cli in this scripts.
+
+#CI/CD Pipeline
+
+As we are deploying on elasticbeanstalk, AWS Codepipeline can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk. We don't have to run eb cli manually.
+
+Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in .buildkite folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
