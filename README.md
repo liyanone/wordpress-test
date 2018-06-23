@@ -20,11 +20,11 @@ Alternatively, follow the instructions [here](http://docs.aws.amazon.com/elastic
 
 Use CloudFormation template in this repository to create a MySQL
 
-aws cloudformation deploy \
-  --stack-name "wordpressdb" \
-  --template-file .cloudformation/rds-mysql.yml \
-  --parameter-overrides "DBIdentifier=wordpressdb" "DBIdentifier=wordpressdb" "DBPassword=xxxxx" "DBUser=admin" "VpcId=vpc-73be8a17" \
-  --capabilities CAPABILITY_NAMED_IAM
+        aws cloudformation deploy \
+          --stack-name "wordpressdb" \
+          --template-file .cloudformation/rds-mysql.yml \
+          --parameter-overrides "DBIdentifier=wordpressdb" "DBIdentifier=wordpressdb" "DBPassword=xxxxx" "DBUser=admin" "VpcId=vpc-73be8a17" \
+          --capabilities CAPABILITY_NAMED_IAM
 
 ## Set up your project directory
 
