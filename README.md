@@ -24,6 +24,8 @@ Use CloudFormation template in this repository to create a MySQL
 
 Download WordPress and push to Github.
 
+        ~$ curl https://wordpress.org/latest.tar.gz -o wordpress.tar.gz
+
 ## Create an Elastic Beanstalk environment
 
 1. Configure a local EB CLI repository with the PHP platform.
