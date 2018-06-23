@@ -57,6 +57,9 @@ Resources:
       - Namespace: aws:autoscaling:launchconfiguration
         OptionName: EC2KeyName
         Value: liyan
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: ImageId
+        Value: ami-81cefcfd
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: RDS_DB_NAME
         Value: !Ref DBName
