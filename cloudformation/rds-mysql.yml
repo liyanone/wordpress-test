@@ -1,0 +1,54 @@
+Description: >
+    MySQL RDS Instance for WordPress
+
+Parameters:
+
+    DBIdentifier:
+        Description: The unique name of db instance
+        Type: String
+
+    DBName:
+        Description: What is the name of the database?
+        Type: String
+
+    DBUser:
+        Description: What is the username of the database?
+        Type: String
+
+    DBPassword:
+        NoEcho: true
+        Description: The WordPress database admin account password
+        Type: String
+        MinLength: 8
+        MaxLength: 41
+        AllowedPattern: '[a-zA-Z0-9]*'
+        ConstraintDescription: must contain only alphanumeric characters.
+
+    VpcId:
+        Description: What is the id of vpc being used
+        Type: String
+
+Resources:
+
+  MySQLDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: '20'
+      DBInstanceClass: db.t2.micro
+      Engine: MySQL
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      DBName: !Ref DBName
+      DBInstanceIdentifier: !Ref DBIdentifier
+      MultiAZ: false
+      PubliclyAccessible: true
+  #     VPCSecurityGroups: !GetAtt SecurityGroup.GroupId
+  #
+  # SecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: SecurityGroup of wordpress db
+  #     SecurityGroupIngress:
+  #       - IpProtocol: -1
+  #         CidrIp: 172.31.0.0/16
+  #     VpcId: !Ref VpcId
