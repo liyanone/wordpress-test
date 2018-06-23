@@ -49,13 +49,3 @@ Outputs:
         Value: !GetAtt MySQLDB.Endpoint.Address
         Export:
           Name: !Sub "${AWS::StackName}-hostname"
-  #     VPCSecurityGroups: !GetAtt SecurityGroup.GroupId
-  #
-  # SecurityGroup:
-  #   Type: AWS::EC2::SecurityGroup
-  #   Properties:
-  #     GroupDescription: SecurityGroup of wordpress db
-  #     SecurityGroupIngress:
-  #       - IpProtocol: -1
-  #         CidrIp: 172.31.0.0/16
-  #     VpcId: !Ref VpcId
