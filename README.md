@@ -18,7 +18,7 @@ Alternatively, follow the instructions [here](http://docs.aws.amazon.com/elastic
 
 ## Set up RDS MySQL
 
-Use CloudFormation template in this repository to create a MySQL
+Use CloudFormation template in this repository to create a MySQL RDS instance
 
         aws cloudformation deploy \
           --stack-name "wordpressdb" \
@@ -94,7 +94,7 @@ Manually scale up to run the site on multiple instances for high availability.
 ```Shell
 ~/wordpress-beanstalk$ eb scale 3
 ```
-## Off Load wp-content
+## Off Load wp-content using AWS S3
 
 When deploying using eb deploy, it has a limitation on the size of the zip file. If there are too many files under wp-content folder, it is better to store files in storage like AWS S3 or install plugin to server wp-content from other storage.
 
