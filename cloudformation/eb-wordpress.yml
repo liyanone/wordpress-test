@@ -27,8 +27,8 @@ Parameters:
         ConstraintDescription: must contain only alphanumeric characters.
 
     DBHost:
-        Description: What is the HOSTNAME of the database?
         Type: String
+        Default: wordpressdb-hostname
 
 Resources:
   wordpressApplication:
@@ -68,7 +68,8 @@ Resources:
         Value: !Ref DBPassword
       - Namespace: aws:elasticbeanstalk:application:environment
         OptionName: RDS_HOSTNAME
-        Value: !Ref DBHost
+        Value:
+          Fn::ImportValue: !Ref DBHost
       SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 5.6
   wordpressEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
