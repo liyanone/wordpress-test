@@ -27,6 +27,9 @@ Resources:
       - Namespace: aws:elasticbeanstalk:environment
         OptionName: EnvironmentType
         Value: SingleInstance
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: EC2KeyName
+        Value: liyan
       SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 5.6
   wordpressEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
