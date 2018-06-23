@@ -34,12 +34,12 @@ Download WordPress and push to Github.
 
 ## Create an Elastic Beanstalk environment
 
-1. Configure a local EB CLI repository with the PHP platform.
+1. Use cloudformation/eb-wordpress.yml to create a single instance elasticbeanstalk environment for wordpress
+
+2. Configure a local EB CLI repository and create elasticbeanstalk with PHP platform using eb cli.
 
         ~/wordpress-test$ eb init
         Follow the command line instructions to finish configurations.
-
-2. Create an Elastic Beanstalk environment with PHP platform.
 
         ~/wordpress-beanstalk$ eb create
         Enter Environment Name
