@@ -50,6 +50,9 @@ Download WordPress and push to Github.
         Uploading: [##################################################] 100% Done...
         ...
 
+        ~/wordpress-beanstalk$ eb create -s  
+        Add -s if you only want to set up a single wordpress instance without any load balancer and auto scaling
+
 ## Deploy WordPress to your environment
 Deploy the project code to your Elastic Beanstalk environment.
 
@@ -83,3 +86,19 @@ Manually scale up to run the site on multiple instances for high availability.
 ```Shell
 ~/wordpress-beanstalk$ eb scale 3
 ```
+#Off Load wp-content
+
+When deploying using eb deploy, it has a limitation on the size of the zip file. If there are too many files under wp-content folder, it is better to store files in storage like AWS S3 or install plugin to server wp-content from other storage.
+
+    Add `.ebextensions/01_s3_sync.config` and fill it with below configurations
+    files:
+      "/opt/elasticbeanstalk/hooks/appdeploy/post/01_sync_images_file.sh":
+        mode: "000755"
+        owner: root
+        group: root
+        content: |
+          #!/usr/bin/env bash
+          aws s3 sync s3://eatigo-blog-images /var/www/html/wp-content/uploads --delete
+          sudo chown -R webapp:webapp /var/www/html/wp-content
+
+    It will put a post-deploy script on the instance and pull the files after the wordpress application deployed. If this script is ran before deployment, the pulled content will be override by deployment package, which not contain the wp-content files.
