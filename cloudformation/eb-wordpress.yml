@@ -27,7 +27,7 @@ Resources:
       - Namespace: aws:elasticbeanstalk:environment
         OptionName: EnvironmentType
         Value: SingleInstance
-      SolutionStackName: 64bit Amazon Linux running PHP 5.6
+      SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 5.6
   wordpressEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
