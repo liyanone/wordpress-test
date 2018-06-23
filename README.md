@@ -26,6 +26,8 @@ Use CloudFormation template in this repository to create a MySQL
           --parameter-overrides "DBIdentifier=wordpressdb" "DBIdentifier=wordpressdb" "DBPassword=xxxxx" "DBUser=admin" "VpcId=vpc-73be8a17" \
           --capabilities CAPABILITY_NAMED_IAM
 
+## Set up elasticbeanstalk
+
 ## Set up your project directory
 
 Download WordPress and push to Github.
