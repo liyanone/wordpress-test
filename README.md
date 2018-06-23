@@ -20,6 +20,12 @@ Alternatively, follow the instructions [here](http://docs.aws.amazon.com/elastic
 
 Use CloudFormation template in this repository to create a MySQL
 
+aws cloudformation deploy \
+  --stack-name "wordpressdb" \
+  --template-file .cloudformation/rds-mysql.yml \
+  --parameter-overrides "DBIdentifier=wordpressdb" "DBIdentifier=wordpressdb" "DBPassword=xxxxx" "DBUser=admin" "VpcId=vpc-73be8a17" \
+  --capabilities CAPABILITY_NAMED_IAM
+
 ## Set up your project directory
 
 Download WordPress and push to Github.
@@ -102,3 +108,5 @@ When deploying using eb deploy, it has a limitation on the size of the zip file.
           sudo chown -R webapp:webapp /var/www/html/wp-content
 
     It will put a post-deploy script on the instance and pull the files after the wordpress application deployed. If this script is ran before deployment, the pulled content will be override by deployment package, which not contain the wp-content files.
+
+    Make sure the instance profile has correct permission to run aws cli in this scripts.
