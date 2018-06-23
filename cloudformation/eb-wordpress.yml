@@ -70,7 +70,7 @@ Resources:
         OptionName: RDS_HOSTNAME
         Value:
           Fn::ImportValue: !Ref DBHost
-      SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 5.6
+      SolutionStackName: 64bit Amazon Linux 2018.03 v2.7.1 running PHP 7.1
   wordpressEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     Properties:
