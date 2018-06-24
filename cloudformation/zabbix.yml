@@ -1,0 +1,188 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Zabbix server template
+Parameters:
+  SSHFrom:
+    Description: CIDR of SSH access.
+    Type: String
+    Default: 0.0.0.0/0
+  HTTPFrom:
+    Description: CIDR of HTTP access.
+    Type: String
+    Default: 0.0.0.0/0
+  AgentFrom:
+    Description: CIDR of Zabbix agents.
+    Type: String
+    Default: 0.0.0.0/0
+  VpcId:
+    Description: VPC ID to which Zabbix server belongs.
+    Type: String
+    Default: vpc-xxxxxxxx
+  SubnetId:
+    Description: SubnetID to which Zabbix server belongs.
+    Type: String
+    Default: subnet-xxxxxxxx
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t1.micro
+    AllowedPattern: '[.a-z0-9]*'
+    ConstraintDescription: must be a valid EC2 instance type.
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: String
+    MinLength: '1'
+    MaxLength: '64'
+    AllowedPattern: '[-_ a-zA-Z0-9]*'
+    ConstraintDescription: 'can contain only alphanumeric characters, spaces, dashes and underscores.'
+Mappings:
+  Zabbix:
+    DB:
+      name: zabbixdb
+      user: zabbix
+      password: password
+Resources:
+  ZabbixRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: ZabbixPolicy
+          PolicyDocument:
+            Statement:
+              - Sid: ZabbixStmt
+                Effect: Allow
+                NotAction: 'iam:*'
+                Resource: '*'
+  ZabbixProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref ZabbixRole
+  ZabbixSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: 'Enable Zabbix Active Agent(10051), SSH, HTTP'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '10051'
+          ToPort: '10051'
+          CidrIp: !Ref AgentFrom
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref SSHFrom
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: !Ref HTTPFrom
+  ZabbixServerEIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref ZabbixServer
+  ZabbixServer:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SubnetId: !Ref SubnetId
+      SourceDestCheck: 'false'
+      ImageId: ami-8e0205f2
+      IamInstanceProfile: !Ref ZabbixProfile
+      SecurityGroupIds:
+        - !Ref ZabbixSecurityGroup
+      Tags:
+        - Key: Name
+          Value: zabbix-server-cfn
+      UserData:
+          "Fn::Base64": !Sub |
+              #!/bin/bash
+              yum install httpd httpd-devel -y
+              yum install mysql mysql-server -y
+              yum install php php-devel php-bcmath  php-pear php-gd php-mbstring php-mysql php-xml -y
+              yum -y install mariadb-server
+              chkconfig httpd on
+              service httpd start
+              chkconfig mariadb on
+              sudo systemctl start mariadb
+              rpm -Uvh http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm
+              yum install zabbix-server-mysql zabbix-web-mysql zabbix-proxy-mysql -y
+              sed -ie "s/# php_value date.timezone.*$/php_value date.timezone Asia\\/Singapore/" "/etc/httpd/conf.d/zabbix.conf"
+              service httpd start
+
+              mysqladmin create zabbixdb --default-character-set=utf8
+              mysql -uroot -e "GRANT ALL PRIVILEGES ON zabbixdb.* to zabbix@localhost IDENTIFIED BY 'password';FLUSH PRIVILEGES;"
+
+              zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -u zabbix --password=password --database=zabbixdb
+
+              sed -i.bak -e "/^DB\\(Name\\|User\\|Password\\)/d" "/etc/zabbix/zabbix_server.conf"
+              sed -i "s/# DBName=/DBName=zabbixdb/" "/etc/zabbix/zabbix_server.conf"
+              sed -i "s/# DBUser=/DBUser=zabbix/" "/etc/zabbix/zabbix_server.conf"
+              sed -i "s/# DBPassword=/DBPassword=password/" "/etc/zabbix/zabbix_server.conf"
+              sed -i "s/^SELINUX=.*$/SELINUX=disabled/" "/etc/sysconfig/selinux"
+
+              chkconfig zabbix-server on
+              service zabbix-server start
+              service httpd restart
+
+              sudo shutdown -r now
+
+Outputs:
+  ZabbixServer:
+    Description: Zabbix Server Endpoint
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !Ref ZabbixServerEIP
+        - /zabbix/
+  DBName:
+    Description: used at "Configure DB connection"
+    Value: !Join
+      - ''
+      - - 'Database name: '
+        - !FindInMap
+          - Zabbix
+          - DB
+          - name
+  DBUser:
+    Description: used at "Configure DB connection"
+    Value: !Join
+      - ''
+      - - 'User: '
+        - !FindInMap
+          - Zabbix
+          - DB
+          - user
+  DBPassoword:
+    Description: used at "Configure DB connection"
+    Value: !Join
+      - ''
+      - - 'Passoword: '
+        - !FindInMap
+          - Zabbix
+          - DB
+          - password
+  ZabbixAgentInPriveteNetwork:
+    Description: configure "/etc/zabbix/zabbix_agentd.conf"
+    Value: !Join
+      - ''
+      - - Server=
+        - !GetAtt
+          - ZabbixServer
+          - PrivateIp
+  ZabbixAgentInPublicNetwork:
+    Description: configure "/etc/zabbix/zabbix_agentd.conf"
+    Value: !Join
+      - ''
+      - - Server=
+        - !Ref ZabbixServerEIP
