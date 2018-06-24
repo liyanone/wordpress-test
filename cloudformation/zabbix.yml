@@ -135,8 +135,6 @@ Resources:
               service zabbix-server start
               service httpd restart
 
-              sudo shutdown -r now
-
 Outputs:
   ZabbixServer:
     Description: Zabbix Server Endpoint
