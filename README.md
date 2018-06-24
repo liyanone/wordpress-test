@@ -62,7 +62,7 @@ First, confirm that your environment is `Ready` with `eb status`.
 
 As we are deploying on elasticbeanstalk, AWS Codepipeline can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk. We don't have to run eb cli manually.
 
-Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in .buildkite folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
+Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in `.buildkite` folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
 
 ## Updating keys and salts
 
@@ -102,4 +102,4 @@ When deploying using eb deploy, it has a limitation on the size of the zip file.
 
 ## Set up Zabbix monitoring Server
 
-Use `cloudformation/zabbix.yml` to create an instance as monitoring server 
+Use `cloudformation/zabbix.yml` to create an instance as monitoring server
