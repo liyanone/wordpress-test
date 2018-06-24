@@ -60,9 +60,9 @@ First, confirm that your environment is `Ready` with `eb status`.
 
 ## Deploy WordPress to your environment using CI/CD Pipeline
 
-As we are deploying on elasticbeanstalk, AWS Codepipeline can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk. We don't have to run eb cli manually.
+As we are deploying on elasticbeanstalk, `AWS Codepipeline` can be used to set up CI/CD pipeline. e.g. when there's a commit pushed to master branch, codepipeline can use codedeploy to deploy source code directly to elasticbeanstalk.
 
-Alternatively, we can utilise other CI/CD tools, such as Buildkite. The pipeline configuration files have been put in `.buildkite` folder. On the build server, we can run eb cli container to deploy application to elasticbeanstalk.
+Alternatively, we can utilise other CI/CD tools, such as `Buildkite`. The pipeline configuration files have been put in `.buildkite` folder. On the build server, we can run `eb cli Docker container` to deploy application to elasticbeanstalk.
 
 ## Updating keys and salts
 
