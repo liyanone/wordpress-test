@@ -18,7 +18,7 @@ Alternatively, follow the instructions [here](http://docs.aws.amazon.com/elastic
 
 ## Set up RDS MySQL
 
-Use CloudFormation template in this repository to create a MySQL RDS instance
+Use `cloudformation/rds-mysql.yml` to create a MySQL RDS instance
 
         aws cloudformation deploy \
           --stack-name "wordpressdb" \
@@ -36,7 +36,7 @@ Download WordPress and push to Github.
 
 There are 2 ways to create elasticbeanstalk:
 
-1. Use cloudformation/eb-wordpress.yml to create a single instance elasticbeanstalk environment for wordpress
+1. Use `cloudformation/eb-wordpress.yml` to create a single instance elasticbeanstalk environment for wordpress
 
 2. Configure a local EB CLI repository and create elasticbeanstalk with PHP platform using eb cli.
 
@@ -44,19 +44,6 @@ There are 2 ways to create elasticbeanstalk:
         Follow the command line instructions to finish configurations.
 
         ~/wordpress-beanstalk$ eb create
-        Enter Environment Name
-        (default is wordpress-test-dev): wordpress-test
-        Enter DNS CNAME prefix
-        (default is wordpress-test):
-
-        Select a load balancer type
-        1) classic
-        2) application
-        3) network
-        (default is 1): 2
-        Creating application version archive "app-7e2a-180623_114601".
-        Uploading: [##################################################] 100% Done...
-        ...
 
         ~/wordpress-beanstalk$ eb create -s  
         Add -s if you only want to set up a single wordpress instance without any load balancer and auto scaling
@@ -112,3 +99,7 @@ When deploying using eb deploy, it has a limitation on the size of the zip file.
     It will put a post-deploy script on the instance and pull the files after the wordpress application deployed. If this script is ran before deployment, the pulled content will be override by deployment package, which not contain the wp-content files.
 
     Make sure the instance profile has correct permission to run aws cli in this scripts.
+
+## Set up Zabbix monitoring Server
+
+Use `cloudformation/zabbix.yml` to create an instance as monitoring server 
